@@ -12,8 +12,11 @@ const handleChange = event => {
     });
 };
 
+const handleStarsChange = event => {
 
-return [formValue, setFormValue, handleChange]
+}
+
+return [formValue, setFormValue, handleChange, handleStarsChange]
 }
 
 export default useForm

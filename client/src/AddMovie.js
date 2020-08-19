@@ -1,36 +1,44 @@
-import React, {useEffect} from 'react';
-import {useParams, useHistory} from 'react-router-dom';
+import React from 'react'
 import useForm from './hooks/useForm';
+import {v4 as uuidv4} from 'uuid';
 import axios from 'axios';
+import {useHistory} from 'react-router-dom';
+
 
 const initialValue = {
     id: '',
     title: '',
     director: '',
     metascore: '',
-    stars: []
+    stars: ''
 }
 
-
-export default function UpdateMovie(props) {
-const {id} = useParams();
+export default function AddMovie(props) {
+const [formValue, setFormValue, handleChange, handleStarsChange] = useForm(initialValue);
 const history = useHistory();
-const [formValue, setFormValue, handleChange] = useForm(initialValue);
 
-useEffect(() => {
+
+const addMovie = event => {
+    event.preventDefault();
+
+    const newMovie = formValue;
+    newMovie.stars = newMovie.stars.split(', ')
+
     axios
-        .get(`http://localhost:5000/api/movies/${id}`)
+        .post('http://localhost:5000/api/movies', newMovie)
         .then(res => {
-            setFormValue(res.data)
+            props.setUpdate(!props.update);
+            setFormValue(initialValue)
+            console.log(res)
+            history.push(`/movies/${res.data[res.data.length - 1].id}`)
         })
         .catch(err => console.warn(err))
-}, [])
+}
 
     return (
         <div>
-            <h1>Update Movie</h1>
-            <div>
-                <form>
+            <h1>Add a Movie</h1>
+            <form>
                     <label>Title: </label>
                     <input
                         type='text'
@@ -52,18 +60,15 @@ useEffect(() => {
                         value={formValue.metascore}
                         onChange={handleChange}
                     ></input>
-                    <button onClick={event => {
-                        event.preventDefault();
-                        axios
-                            .put(`http://localhost:5000/api/movies/${id}`, formValue)
-                            .then(res => {
-                                props.setUpdate(!props.update);
-                                history.push(`/movies/${id}`)
-                            })
-                            .catch(err => console.warn(err))
-                    }}>Submit Changes</button>
-                </form>
-            </div>
+                    <label>Stars: </label>
+                    <input
+                        type='text'
+                        name='stars'
+                        value={formValue.stars}
+                        onChange={handleChange}
+                    ></input>
+                    <button onClick={addMovie}>Add Movie</button>
+            </form>
         </div>
     )
 }
