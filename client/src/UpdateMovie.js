@@ -52,10 +52,19 @@ useEffect(() => {
                         value={formValue.metascore}
                         onChange={handleChange}
                     ></input>
+                    <label>Stars: </label>
+                    <input
+                        type='text'
+                        name='stars'
+                        value={formValue.stars}
+                        onChange={handleChange}
+                    ></input>
                     <button onClick={event => {
                         event.preventDefault();
+                        const newMovie = formValue;
+                        newMovie.stars = newMovie.stars.split(', ')
                         axios
-                            .put(`http://localhost:5000/api/movies/${id}`, formValue)
+                            .put(`http://localhost:5000/api/movies/${id}`, newMovie)
                             .then(res => {
                                 props.setUpdate(!props.update);
                                 history.push(`/movies/${id}`)
