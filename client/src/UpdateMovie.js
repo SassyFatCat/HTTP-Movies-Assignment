@@ -62,7 +62,9 @@ useEffect(() => {
                     <button onClick={event => {
                         event.preventDefault();
                         const newMovie = formValue;
+                        if (typeof newMovie.stars !== 'object') {
                         newMovie.stars = newMovie.stars.split(', ')
+                        }
                         axios
                             .put(`http://localhost:5000/api/movies/${id}`, newMovie)
                             .then(res => {
